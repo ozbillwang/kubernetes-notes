@@ -34,6 +34,10 @@ aws_secret_access_key=minioadmin
 EOF
 ```
 
+### make sure your kubernetes cluster ready.
+
+It could be minikube, kops, docker desktop with kubernetes enabled, etc.
+
 ### Install Velero in the Kubernetes Cluster
 ```
 velero install \
