@@ -1,31 +1,36 @@
 ### Running minio container
 ```
 docker pull minio/minio
-docker run --name minio -p 9000:9000 -v data:/data minio/minio server /data
+docker volume create data
+docker run -d --name minio -p 9000:9000 -v data:/data minio/minio server /data
 ```
 
 ### Grab access and secret key
 /data/.minio.sys/config/config.json
 ```
-docker exec -it minio cat /data/.minio.sys/config/config.json | egrep "(access|secret)_key"
-```
-Change access key and secret key from the Minio dashboard.
+docker exec -it minio cat /data/.minio.sys/config/config.json | jq .credentials._[]
 
-### Download Velero 1.0.0 Release
+{
+  "key": "access_key",
+  "value": "minioadmin"
+}
+{
+  "key": "secret_key",
+  "value": "minioadmin"
+}
 ```
-wget https://github.com/heptio/velero/releases/download/v1.0.0/velero-v1.0.0-linux-amd64.tar.gz
-tar zxf velero-v1.0.0-linux-amd64.tar.gz
-sudo mv velero-v1.0.0-linux-amd64/velero /usr/local/bin/
-rm -rf velero*
 
+### install velero on MacOS
+```
+brew install velero
 ```
 
 ### Create credentials file (Needed for velero initialization)
 ```
 cat <<EOF>> minio.credentials
 [default]
-aws_access_key_id=minio
-aws_secret_access_key=minio123
+aws_access_key_id=minioadmin
+aws_secret_access_key=minioadmin
 EOF
 ```
 
