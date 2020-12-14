@@ -36,7 +36,16 @@ EOF
 
 ### make sure your kubernetes cluster ready.
 
-It could be minikube, kops, docker desktop with kubernetes enabled, etc.
+It could be minikube, kops, docker desktop with kubernetes enabled, AWS EKS, Azure AKS, etc.
+
+```
+$ velero version
+Client:
+	Version: v1.5.2
+	Git commit: -
+<error getting server version: no matches for kind "ServerStatusRequest" in version "velero.io/v1">
+```
+The reason is, velero server is not installed yet to kubernetes cluster.
 
 ### Install Velero in the Kubernetes Cluster
 ```
