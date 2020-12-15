@@ -1,24 +1,15 @@
 ### Running minio container
 ```
-$ docker pull minio/minio
-$ docker volume create data
-$ docker run -d --name minio -p 9000:9000 -v data:/data minio/minio server /data
+$ helm repo add minio https://helm.min.io/
+$ helm install --set accessKey=minioadmin,secretKey=minioadmin --generate-name minio/minio
 ```
+Get its service IP
 
-### Grab access and secret key
-/data/.minio.sys/config/config.json
 ```
-$ docker exec -it minio cat /data/.minio.sys/config/config.json | jq .credentials._[]
-
-{
-  "key": "access_key",
-  "value": "minioadmin"
-}
-{
-  "key": "secret_key",
-  "value": "minioadmin"
-}
+$ kubectl get service
+service/minio-1608073655   ClusterIP   10.96.205.247   <none>        9000/TCP   16m
 ```
+So the IP address is `10.96.205.247` in this case.
 
 ### install velero on MacOS
 ```
@@ -50,13 +41,16 @@ Client:
 The reason is, velero server is not installed yet to kubernetes cluster.
 
 ### Install Velero in the Kubernetes Cluster
+
+Replace s3url with real IP you get above.
+
 ```
 velero install \
    --provider aws \
    --plugins velero/velero-plugin-for-aws:v1.0.0 \
    --bucket kubedemo \
    --secret-file ./minio.credentials \
-   --backup-location-config region=minio,s3ForcePathStyle=true,s3Url=http://<ip>:9000
+   --backup-location-config region=minio,s3ForcePathStyle=true,s3Url=http://10.96.205.247:9000
 ```
 Velero server is installed in namespace `velero`
 ```
@@ -80,7 +74,16 @@ Client:
 Server:
 	Version: v1.5.2
 ```
-### Enable tab completion for preferred shell
+### check velero backup location
+
 ```
-source <(velero completion zsh)
+$ velero backup-location get
+
+NAME      PROVIDER   BUCKET/PREFIX   PHASE       LAST VALIDATED                   ACCESS MODE
+default   aws        kubedemo        Available   2020-12-16 10:25:48 +1100 AEDT   ReadWrite
 ```
+
+Now we are ready to do the backup and restore.
+
+### velero backup
+
