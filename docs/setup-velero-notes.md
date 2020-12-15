@@ -58,6 +58,18 @@ velero install \
    --secret-file ./minio.credentials \
    --backup-location-config region=minio,s3ForcePathStyle=true,s3Url=http://<ip>:9000
 ```
+Velero server is installed in namespace `velero`
+```
+$ kk -n velero get all
+NAME                          READY   STATUS    RESTARTS   AGE
+pod/velero-84b455d4db-8j8j7   1/1     Running   0          21h
+
+NAME                     READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/velero   1/1     1            1           21h
+
+NAME                                DESIRED   CURRENT   READY   AGE
+replicaset.apps/velero-84b455d4db   1         1         1       21h
+```
 
 Now you are fine to check velero version
 ```
@@ -68,7 +80,6 @@ Client:
 Server:
 	Version: v1.5.2
 ```
-
 ### Enable tab completion for preferred shell
 ```
 source <(velero completion zsh)
