@@ -148,4 +148,23 @@ Items backed up:              28
 
 Velero-Native Snapshots: <none included>
 
-$ velero backup logs firstbackup
+$ $ kubectl -n velero get backups
+NAME          AGE
+firstbackup   5m44s
+```
+### Test with restore
+
+Delete the namespace `testing`
+```
+$ kubectl delete ns testing
+
+$ kubectl get ns
+```
+
+Restore from backup
+```
+$ velero restore create firstrestore --from-backup firstbackup
+
+$ kubectl -n testing get all
+```
+You get everything back in namespace `testing`
