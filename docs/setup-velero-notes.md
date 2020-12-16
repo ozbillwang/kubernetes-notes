@@ -168,3 +168,11 @@ $ velero restore create firstrestore --from-backup firstbackup
 $ kubectl -n testing get all
 ```
 You get everything back in namespace `testing`
+
+### schedule backup
+
+```
+$ velero schedule create test --schedule="@every 1m" --include-namespaces testing
+
+$ velero schedule get
+```
